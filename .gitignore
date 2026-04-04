@@ -1,0 +1,53 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# Node.js & Package Management
+node_modules/
+npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+pnpm-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Next.js (Client)
+.next/
+out/
+dist/
+
+# Build Artifacts
+build/
+.tsc/
+tsconfig.tsbuildinfo
+
+# IDEs & Editors
+.vscode/
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Development
+.turbo/
+.cache/
