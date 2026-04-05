@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/AuthContext'
 import Sidebar from '@/components/layout/Sidebar'
+import Header from '@/components/layout/Header'
 
 export default function DashboardLayout({ children }) {
   const { user, loading } = useAuth()
@@ -30,9 +31,12 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen bg-[#F5F6FA] flex">
       <Sidebar />
-      <main className="flex-1 ml-[250px] min-h-screen">
-        {children}
-      </main>
+      <div className="flex-1 ml-[250px] flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
