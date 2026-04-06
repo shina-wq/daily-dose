@@ -6,6 +6,7 @@ require('./db')
 const authRoutes = require('./routes/auth')
 const medicationRoutes = require('./routes/medications')
 const appointmentRoutes = require('./routes/appointments')
+const healthLogRoutes = require('./routes/healthLogs')
 
 const app = express()
 
@@ -19,11 +20,7 @@ app.use(express.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/medications', medicationRoutes)
 app.use('/api/appointments', appointmentRoutes)
-
-// test route
-app.get('/', (req, res) => {
-  res.json({ message: 'DailyDose server is running 🚀' })
-})
+app.use('/api/health-logs', healthLogRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
