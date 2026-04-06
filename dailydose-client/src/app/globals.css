@@ -1,2 +1,61 @@
 @import "tailwindcss";
 @source "../**/*.{js,jsx,ts,tsx,mdx}";
+
+/* calendar overrides */
+.calendar-wrapper .react-calendar {
+  font-family: inherit;
+  border: none;
+  width: 100%;
+  background: transparent;
+}
+
+.calendar-wrapper .react-calendar__tile {
+  border-radius: 10px;
+  font-size: 0.75rem;
+  padding: 6px 4px;
+  color: #374151;
+}
+
+.calendar-wrapper .react-calendar__tile:hover {
+  background: #EFF6FF;
+  color: #4A6FA5;
+}
+
+.calendar-wrapper .react-calendar__tile--active {
+  background: #4A6FA5 !important;
+  color: white !important;
+  border-radius: 10px;
+}
+
+.calendar-wrapper .react-calendar__tile--now {
+  background: #EFF6FF;
+  color: #4A6FA5;
+  font-weight: 600;
+}
+
+.calendar-wrapper .react-calendar__navigation button {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  border-radius: 10px;
+  min-width: 32px;
+}
+
+.calendar-wrapper .react-calendar__navigation button:hover {
+  background: #EFF6FF;
+}
+
+.calendar-wrapper .react-calendar__month-view__weekdays {
+  font-size: 0.65rem;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.calendar-wrapper .react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+}
+
+.calendar-wrapper .react-calendar__navigation {
+  margin-bottom: 8px;
+}

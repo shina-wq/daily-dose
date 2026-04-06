@@ -5,6 +5,7 @@ require('./db')
 
 const authRoutes = require('./routes/auth')
 const medicationRoutes = require('./routes/medications')
+const appointmentRoutes = require('./routes/appointments')
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use(express.json())
 // routes
 app.use('/api/auth', authRoutes)
 app.use('/api/medications', medicationRoutes)
+app.use('/api/appointments', appointmentRoutes)
 
 // test route
 app.get('/', (req, res) => {
