@@ -2,7 +2,20 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useAuth } from './AuthContext'
 import api from './api'
-import { format, differenceInMinutes, differenceInHours, parseISO } from 'date-fns'
+import { format, differenceInHours, parseISO } from 'date-fns'
+
+const toDateKey = (value) => {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) return ''
+    return format(parsed, 'yyyy-MM-dd')
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return ''
+  return format(parsed, 'yyyy-MM-dd')
+}
 
 const NotificationContext = createContext(null)
 
@@ -28,7 +41,7 @@ export const NotificationProvider = ({ children }) => {
 
       for (const med of medications) {
         const todayLog = logs.find(
-          l => l.medication_id === med.id && l.date?.startsWith(today)
+          l => l.medication_id === med.id && toDateKey(l.date) === today
         )
         if (todayLog?.status === 'taken') continue
 

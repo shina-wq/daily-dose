@@ -4,6 +4,25 @@ import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import { format } from 'date-fns'
 
+const toDateKey = (value) => {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) return ''
+    return format(parsed, 'yyyy-MM-dd')
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return ''
+  return format(parsed, 'yyyy-MM-dd')
+}
+
+const parseDateKeyToLocalDate = (dateKey) => {
+  const [year, month, day] = String(dateKey).split('-').map(Number)
+  if (!year || !month || !day) return null
+  return new Date(year, month - 1, day)
+}
+
 const frequencyLabel = (freq) => {
   const map = {
     'every_day': 'Every day',
@@ -17,12 +36,30 @@ const frequencyLabel = (freq) => {
 
 const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
+const sameMedication = (left, right) => String(left) === String(right)
+
+const getCurrentWeekDateKeys = () => {
+  const now = new Date()
+  const mondayOffset = (now.getDay() + 6) % 7
+  const monday = new Date(now)
+  monday.setHours(0, 0, 0, 0)
+  monday.setDate(now.getDate() - mondayOffset)
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const day = new Date(monday)
+    day.setDate(monday.getDate() + i)
+    return format(day, 'yyyy-MM-dd')
+  })
+}
+
 export default function MedicationsPage() {
   const router = useRouter()
   const [medications, setMedications] = useState([])
   const [weeklyLogs, setWeeklyLogs] = useState([])
   const [filter, setFilter] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [actionError, setActionError] = useState('')
+  const [loggingMedicationId, setLoggingMedicationId] = useState(null)
   const [notification, setNotification] = useState(null)
   const today = format(new Date(), 'yyyy-MM-dd')
 
@@ -71,6 +108,7 @@ export default function MedicationsPage() {
     const autoMarkMissed = async () => {
       const now = new Date()
       const currentMinutes = now.getHours() * 60 + now.getMinutes()
+      let anyUpdated = false
 
       for (const med of medications) {
         const todayLog = getTodayLog(med.id)
@@ -85,35 +123,72 @@ export default function MedicationsPage() {
               status: 'missed',
               date: today
             })
+            anyUpdated = true
           } catch (err) {
             console.error('auto-miss error:', err)
           }
         }
       }
-      await fetchData()
+
+      if (anyUpdated) {
+        await fetchData()
+      }
     }
 
     checkReminders()
     autoMarkMissed()
     const interval = setInterval(checkReminders, 60000)
     return () => clearInterval(interval)
-  }, [medications])
+  }, [medications, weeklyLogs, today, fetchData])
 
   const getTodayLog = (medId) => {
-    return weeklyLogs.find(l => l.medication_id === medId && l.date?.startsWith(today))
+    return weeklyLogs.find(l => sameMedication(l.medication_id, medId) && toDateKey(l.date) === today)
   }
 
   const getWeekAdherence = (medId) => {
-    return weeklyLogs.filter(l => l.medication_id === medId)
+    const weekKeys = getCurrentWeekDateKeys()
+    const weekSet = new Set(weekKeys)
+    const byDate = new Map()
+
+    for (const log of weeklyLogs) {
+      if (!sameMedication(log.medication_id, medId)) continue
+      const dateKey = toDateKey(log.date)
+      if (!weekSet.has(dateKey)) continue
+      byDate.set(dateKey, log.status)
+    }
+
+    return weekKeys.map(dateKey => byDate.get(dateKey) || null)
   }
 
   const handleLogDose = async (medId, status) => {
+    setActionError('')
+    setLoggingMedicationId(medId)
     try {
-      await api.post(`/medications/${medId}/log`, { status, date: today })
-      await fetchData()
+      const res = await api.post(`/medications/${medId}/log`, { status, date: today })
+      const savedLog = res.data
+      const normalizedLog = {
+        ...savedLog,
+        medication_id: savedLog.medication_id ?? medId,
+        date: toDateKey(savedLog.date || today)
+      }
+
+      // Optimistic sync so the card updates immediately.
+      setWeeklyLogs(prev => {
+        const withoutToday = prev.filter(
+          l => !(sameMedication(l.medication_id, medId) && toDateKey(l.date) === today)
+        )
+        return [normalizedLog, ...withoutToday]
+      })
+
+      // Keep server and UI eventually consistent even if optimistic state diverges.
+      fetchData()
+
       if (notification?.id === medId) setNotification(null)
     } catch (err) {
       console.error('log dose error:', err)
+      setActionError(err.response?.data?.message || 'Could not update this dose right now.')
+    } finally {
+      setLoggingMedicationId(null)
     }
   }
 
@@ -226,6 +301,12 @@ export default function MedicationsPage() {
       </div>
 
       {/* notification banner */}
+      {actionError && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </div>
+      )}
+
       {notification && (
         <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -243,10 +324,11 @@ export default function MedicationsPage() {
             </div>
           </div>
           <button
-            onClick={() => handleLogDose(notification.id, 'taken')}
-            className="bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors whitespace-nowrap"
+            onClick={() => handleLogDose(notification.medication.id, 'taken')}
+            disabled={loggingMedicationId === notification.medication.id}
+            className="bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors whitespace-nowrap disabled:opacity-60"
           >
-            Mark as Taken
+            {loggingMedicationId === notification.medication.id ? 'Updating...' : 'Mark as Taken'}
           </button>
         </div>
       )}
@@ -287,7 +369,7 @@ export default function MedicationsPage() {
         <div className="grid grid-cols-2 gap-4">
           {filteredMeds.map(med => {
             const todayLog = getTodayLog(med.id)
-            const weekLogs = getWeekAdherence(med.id)
+            const weekStatuses = getWeekAdherence(med.id)
             const isTaken = todayLog?.status === 'taken'
             const isMissed = todayLog?.status === 'missed'
 
@@ -341,8 +423,7 @@ export default function MedicationsPage() {
                   <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-2">This week's adherence</p>
                   <div className="flex items-center gap-1.5">
                     {weekDays.map((day, i) => {
-                      const log = weekLogs[i]
-                      const status = log?.status
+                      const status = weekStatuses[i]
                       return (
                         <div key={i} className="flex flex-col items-center gap-1">
                           <span className="text-[10px] text-gray-400">{day}</span>
@@ -396,16 +477,18 @@ export default function MedicationsPage() {
                         </span>
                         <button
                         onClick={() => handleLogDose(med.id, 'taken')}
-                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-xl hover:bg-[#4A6FA5] hover:text-white transition-colors"
+                        disabled={loggingMedicationId === med.id}
+                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-xl hover:bg-[#4A6FA5] hover:text-white transition-colors disabled:opacity-60"
                         >
-                        Mark Taken
+                        {loggingMedicationId === med.id ? 'Updating...' : 'Mark Taken'}
                         </button>
                     </div>
                     ) : (
                     <div className="flex items-center gap-2">
                         <button
                         onClick={() => handleLogDose(med.id, 'missed')}
-                        className="flex items-center justify-center gap-1.5 bg-red-50 text-red-400 text-xs font-medium py-2 px-3 rounded-xl hover:bg-red-100 transition-colors"
+                        disabled={loggingMedicationId === med.id}
+                        className="flex items-center justify-center gap-1.5 bg-red-50 text-red-400 text-xs font-medium py-2 px-3 rounded-xl hover:bg-red-100 transition-colors disabled:opacity-60"
                         >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -414,12 +497,13 @@ export default function MedicationsPage() {
                         </button>
                         <button
                         onClick={() => handleLogDose(med.id, 'taken')}
-                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-xl hover:bg-[#4A6FA5] hover:text-white transition-colors"
+                        disabled={loggingMedicationId === med.id}
+                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-xl hover:bg-[#4A6FA5] hover:text-white transition-colors disabled:opacity-60"
                         >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <polyline points="20 6 9 17 4 12"/>
                         </svg>
-                        Mark Taken
+                        {loggingMedicationId === med.id ? 'Updating...' : 'Mark Taken'}
                         </button>
                     </div>
                     )}

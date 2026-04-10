@@ -3,8 +3,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 
-const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+const frequencyOptions = [
+  { value: 'every_day', label: 'Every Day' },
+  { value: 'twice_daily', label: 'Twice Daily' },
+  { value: 'three_times', label: 'Three Times Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'as_needed', label: 'As Needed' }
+]
+
+const formOptions = ['Tablet', 'Capsule', 'Liquid', 'Injection', 'Patch', 'Drops', 'Inhaler', 'Softgel']
+const unitOptions = ['mg', 'mcg', 'ml', 'IU', 'g']
 
 export default function AddMedicationPage() {
   const router = useRouter()
@@ -12,21 +20,12 @@ export default function AddMedicationPage() {
     name: '',
     dosage: '',
     dosage_unit: 'mg',
-    form: 'Tablet',
     frequency: 'every_day',
     time_to_take: '08:00',
-    notes: '',
-    reminders: true
+    notes: ''
   })
-  const [selectedDays, setSelectedDays] = useState([0, 1, 2, 3, 4, 5, 6])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
-  const toggleDay = (index) => {
-    setSelectedDays(prev =>
-      prev.includes(index) ? prev.filter(d => d !== index) : [...prev, index]
-    )
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -134,28 +133,12 @@ export default function AddMedicationPage() {
                       onChange={e => setForm({ ...form, dosage_unit: e.target.value })}
                       className="px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5] bg-white"
                     >
-                      {['mg', 'mcg', 'ml', 'IU', 'g'].map(u => (
+                      {unitOptions.map(u => (
                         <option key={u} value={u}>{u}</option>
                       ))}
                     </select>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Form</label>
-                  <select
-                    value={form.form}
-                    onChange={e => setForm({ ...form, form: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5] bg-white"
-                  >
-                    {['Tablet', 'Capsule', 'Liquid', 'Injection', 'Patch', 'Drops', 'Inhaler', 'Softgel'].map(f => (
-                      <option key={f} value={f}>{f}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* frequency + time */}
-              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Frequency</label>
                   <select
@@ -163,64 +146,24 @@ export default function AddMedicationPage() {
                     onChange={e => setForm({ ...form, frequency: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5] bg-white"
                   >
-                    <option value="every_day">Every Day</option>
-                    <option value="twice_daily">Twice Daily</option>
-                    <option value="three_times">Three Times Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="as_needed">As Needed</option>
+                    {frequencyOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Time of Day</label>
-                  <div className="relative">
-                    <input
-                      type="time"
-                      value={form.time_to_take}
-                      onChange={e => setForm({ ...form, time_to_take: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5]"
-                    />
-                  </div>
-                </div>
               </div>
 
-              {/* days selector */}
+              {/* time */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Days</label>
-                <div className="flex items-center gap-2">
-                  {days.map((day, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => toggleDay(i)}
-                      className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
-                        selectedDays.includes(i)
-                          ? 'bg-[#4A6FA5] text-white'
-                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  ))}
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Time of Day</label>
+                <div className="relative">
+                  <input
+                    type="time"
+                    value={form.time_to_take}
+                    onChange={e => setForm({ ...form, time_to_take: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5]"
+                  />
                 </div>
-              </div>
-
-              {/* reminders toggle */}
-              <div className="flex items-center justify-between py-3 border-t border-b border-gray-100">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Reminders</p>
-                  <p className="text-xs text-gray-400">Send push notifications for this medication</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setForm({ ...form, reminders: !form.reminders })}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    form.reminders ? 'bg-[#4A6FA5]' : 'bg-gray-200'
-                  }`}
-                >
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                    form.reminders ? 'translate-x-6' : 'translate-x-0.5'
-                  }`} />
-                </button>
               </div>
 
               {/* instructions */}

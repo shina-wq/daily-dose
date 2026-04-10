@@ -5,6 +5,19 @@ import api from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import { format, parseISO, isFuture, isToday } from 'date-fns'
 
+const toDateKey = (value) => {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) return ''
+    return format(parsed, 'yyyy-MM-dd')
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return ''
+  return format(parsed, 'yyyy-MM-dd')
+}
+
 const MOOD_LABELS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Great' }
 const ENERGY_LABELS = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High', 5: 'Very High' }
 
@@ -59,7 +72,7 @@ export default function DashboardPage() {
 
   // stats
   const getTodayLog = (medId) =>
-    weeklyLogs.find(l => l.medication_id === medId && l.date?.startsWith(today))
+    weeklyLogs.find(l => l.medication_id === medId && toDateKey(l.date) === today)
 
   const takenToday = medications.filter(m => getTodayLog(m.id)?.status === 'taken').length
   const weeklyAdherence = weeklyLogs.length > 0
@@ -224,12 +237,12 @@ export default function DashboardPage() {
                   return (
                     <div key={med.id} className="flex items-center gap-4 px-5 py-4">
                       {/* time */}
-                      <p className="text-xs font-medium text-gray-400 w-16 flex-shrink-0">
+                      <p className="text-xs font-medium text-gray-400 w-16 shrink-0">
                         {med.time_to_take.slice(0, 5)}
                       </p>
 
                       {/* icon */}
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                         status === 'taken' ? 'bg-green-50' : 'bg-blue-50'
                       }`}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={status === 'taken' ? '#6BBF8E' : '#4A6FA5'} strokeWidth="2">
@@ -307,7 +320,7 @@ export default function DashboardPage() {
                     return (
                       <div key={appt.id} className="flex items-center gap-3 px-4 py-3">
                         {/* date block */}
-                        <div className="w-10 text-center flex-shrink-0">
+                        <div className="w-10 text-center shrink-0">
                           <p className="text-[10px] font-semibold text-[#4A6FA5] uppercase">
                             {format(apptDate, 'MMM')}
                           </p>
