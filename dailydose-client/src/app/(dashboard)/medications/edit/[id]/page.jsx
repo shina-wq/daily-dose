@@ -120,8 +120,8 @@ export default function EditMedicationPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <button
             onClick={() => router.push(`/medications/${medicationId}`)}
@@ -138,7 +138,7 @@ export default function EditMedicationPage() {
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex-1">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6 pb-5 border-b border-gray-100">
@@ -174,10 +174,10 @@ export default function EditMedicationPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Dosage</label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row">
                     <input
                       type="text"
                       value={form.dosage}
@@ -189,7 +189,7 @@ export default function EditMedicationPage() {
                     <select
                       value={form.dosage_unit}
                       onChange={e => setForm({ ...form, dosage_unit: e.target.value })}
-                      className="px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 focus:border-[#4A6FA5] bg-white"
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm focus:border-[#4A6FA5] focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/30 sm:w-28"
                     >
                       {unitOptions.map(u => (
                         <option key={u} value={u}>{u}</option>
@@ -233,9 +233,9 @@ export default function EditMedicationPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs text-gray-400">Changes are saved directly to the medication record and are reflected across the app.</p>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 sm:justify-end">
                   <button
                     type="button"
                     onClick={() => router.push(`/medications/${medicationId}`)}
@@ -256,7 +256,7 @@ export default function EditMedicationPage() {
           </div>
         </div>
 
-        <div className="w-72 space-y-4 shrink-0">
+        <div className="w-full shrink-0 space-y-4 lg:w-72">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">What updates here</h3>
             <div className="space-y-3 text-xs text-gray-500">

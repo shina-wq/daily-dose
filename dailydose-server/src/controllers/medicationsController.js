@@ -6,6 +6,16 @@ const getMedicationId = (value) => {
   return id
 }
 
+const getLogRangeDays = (range) => {
+  const normalized = String(range || 'week').toLowerCase()
+  const map = {
+    week: 6,
+    year: 364
+  }
+
+  return map[normalized] ?? map.week
+}
+
 // get all medications for user
 const getMedications = async (req, res) => {
   try {
@@ -173,16 +183,35 @@ const logDose = async (req, res) => {
 
 // get medication logs for the past 7 days
 const getWeeklyLogs = async (req, res) => {
+  const range = String(req.query.range || 'week').toLowerCase()
+
   try {
-    const result = await pool.query(
-      `SELECT ml.*, m.name, m.dosage
-       FROM medication_logs ml
-       JOIN medications m ON ml.medication_id = m.id
-       WHERE ml.user_id = $1
-       AND ml.date >= CURRENT_DATE - INTERVAL '6 days'
-       ORDER BY ml.date DESC`,
-      [req.user.id]
-    )
+    let result
+
+    if (range === 'month') {
+      result = await pool.query(
+        `SELECT ml.*, m.name, m.dosage
+         FROM medication_logs ml
+         JOIN medications m ON ml.medication_id = m.id
+         WHERE ml.user_id = $1
+         AND ml.date >= DATE_TRUNC('month', CURRENT_DATE)::date
+         AND ml.date < (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month')::date
+         ORDER BY ml.date DESC`,
+        [req.user.id]
+      )
+    } else {
+      const daysBack = getLogRangeDays(range)
+      result = await pool.query(
+        `SELECT ml.*, m.name, m.dosage
+         FROM medication_logs ml
+         JOIN medications m ON ml.medication_id = m.id
+         WHERE ml.user_id = $1
+         AND ml.date >= CURRENT_DATE - $2::int
+         ORDER BY ml.date DESC`,
+        [req.user.id, daysBack]
+      )
+    }
+
     res.status(200).json(result.rows)
   } catch (err) {
     console.error('getWeeklyLogs error:', err.message)

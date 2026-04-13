@@ -88,7 +88,7 @@ export default function Header() {
   }
 
   return (
-    <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-20">
+    <header className="h-12 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-20">
       <div className="ml-auto flex items-center gap-3">
         {/* bell button */}
         <div className="relative">
