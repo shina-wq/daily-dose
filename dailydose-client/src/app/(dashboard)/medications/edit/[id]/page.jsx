@@ -125,7 +125,7 @@ export default function EditMedicationPage() {
         <div>
           <button
             onClick={() => router.push(`/medications/${medicationId}`)}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-3"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-3 cursor-pointer"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="19" y1="12" x2="5" y2="12" />
@@ -239,14 +239,14 @@ export default function EditMedicationPage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/medications/${medicationId}`)}
-                    className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                    className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-60"
+                    className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors cursor-pointer disabled:opacity-60"
                   >
                     {saving ? 'Saving...' : 'Save changes'}
                   </button>

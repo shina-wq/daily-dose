@@ -135,7 +135,7 @@ export default function NotificationsPage() {
                 key={notification.id}
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-start gap-4"
               >
-                <div className={`w-10 h-10 ${style.bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-10 h-10 ${style.bg} rounded-xl flex items-center justify-center shrink-0`}>
                   {style.icon}
                 </div>
                 <div className="flex-1 min-w-0">

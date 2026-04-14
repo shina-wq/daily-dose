@@ -55,7 +55,7 @@ export default function AddAppointmentPage() {
       {/* back link */}
       <button
         onClick={() => router.push('/appointments')}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6"
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6 cursor-pointer"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
@@ -150,7 +150,7 @@ export default function AddAppointmentPage() {
                     : 'border-gray-200 text-gray-500 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
                   form.type === opt.value ? 'border-[#4A6FA5]' : 'border-gray-300'
                 }`}>
                   {form.type === opt.value && (
@@ -242,14 +242,14 @@ export default function AddAppointmentPage() {
           <button
             type="button"
             onClick={() => router.push('/appointments')}
-            className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+            className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-60"
+            className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors cursor-pointer disabled:opacity-60"
           >
             {loading ? 'Saving...' : 'Save Appointment'}
           </button>

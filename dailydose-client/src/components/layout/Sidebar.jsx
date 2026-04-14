@@ -70,11 +70,11 @@ export default function Sidebar() {
     : 'U'
 
   return (
-    <aside className="w-[250px] min-h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-30">
+    <aside className="w-62.5 min-h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-30">
       {/* logo */}
       <div className="p-5 pb-6">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#4A6FA5] rounded-xl flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-[#4A6FA5] rounded-xl flex items-center justify-center shrink-0">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
@@ -92,13 +92,13 @@ export default function Sidebar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${
                     isActive
-                      ? 'bg-[#4A6FA5]/10 text-[#4A6FA5]'
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                      ? 'bg-[#4A6FA5] text-white'
+                      : 'text-gray-500 hover:bg-[#4A6FA5]/10 hover:text-[#4A6FA5]'
                   }`}
                 >
-                  <span className={isActive ? 'text-[#4A6FA5]' : 'text-gray-400'}>
+                  <span className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-[#4A6FA5]'}>
                     {item.icon}
                   </span>
                   {item.label}
@@ -112,7 +112,7 @@ export default function Sidebar() {
       {/* user profile at bottom */}
       <div className="p-3 border-t border-gray-100">
         <div className="flex items-center gap-2.5 px-2 py-2">
-          <div className="w-8 h-8 rounded-full bg-[#4A6FA5] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-[#4A6FA5] flex items-center justify-center text-white text-xs font-semibold shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0">

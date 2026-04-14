@@ -95,7 +95,7 @@ export default function Header() {
           <button
             ref={bellRef}
             onClick={handleOpen}
-            className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors"
+            className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -120,7 +120,7 @@ export default function Header() {
                 {notifications.length > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs text-[#4A6FA5] hover:underline"
+                    className="text-xs text-[#4A6FA5] hover:underline cursor-pointer"
                   >
                     Mark all read
                   </button>
@@ -161,7 +161,7 @@ export default function Header() {
                             <button
                               onClick={() => handleMarkTaken(notification)}
                               disabled={marking === notification.id}
-                              className="mt-1.5 text-xs font-medium text-[#4A6FA5] hover:underline disabled:opacity-60"
+                              className="mt-1.5 text-xs font-medium text-[#4A6FA5] hover:underline cursor-pointer disabled:opacity-60"
                             >
                               {marking === notification.id ? 'Marking...' : 'Mark as taken'}
                             </button>
@@ -181,7 +181,7 @@ export default function Header() {
                                 router.push('/appointments')
                                 setOpen(false)
                               }}
-                              className="mt-1.5 text-xs font-medium text-[#4A6FA5] hover:underline"
+                              className="mt-1.5 text-xs font-medium text-[#4A6FA5] hover:underline cursor-pointer"
                             >
                               View appointment
                             </button>
@@ -209,7 +209,7 @@ export default function Header() {
                       router.push('/notifications')
                       setOpen(false)
                     }}
-                    className="text-xs font-medium text-[#4A6FA5] hover:underline"
+                    className="text-xs font-medium text-[#4A6FA5] hover:underline cursor-pointer"
                   >
                     View all notifications →
                   </button>

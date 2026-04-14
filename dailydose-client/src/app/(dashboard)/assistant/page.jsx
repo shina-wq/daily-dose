@@ -155,7 +155,7 @@ export default function AssistantPage() {
       <div className="h-full flex flex-col min-w-0">
 
         {/* chat header */}
-        <div className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between flex-shrink-0">
+        <div className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between shrink-0">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">AI Assistant</h1>
             <p className="text-xs text-gray-400 mt-0.5">Your personal health companion. I know your meds and logs!</p>
@@ -176,7 +176,7 @@ export default function AssistantPage() {
 
         {/* pre-visit summary panel */}
         {showSummary && (
-          <div className="mx-8 mt-4 bg-white rounded-2xl border border-blue-100 shadow-sm flex-shrink-0">
+          <div className="mx-8 mt-4 bg-white rounded-2xl border border-blue-100 shadow-sm shrink-0">
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-50">
               <div className="flex items-center gap-2">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A6FA5" strokeWidth="2">
@@ -232,7 +232,7 @@ export default function AssistantPage() {
                     onClick={() => sendMessage(action.prompt)}
                     className="flex items-center gap-2.5 bg-white border border-gray-200 hover:border-[#4A6FA5]/40 hover:bg-blue-50/50 text-sm text-gray-600 font-medium px-4 py-3 rounded-xl transition-colors text-left"
                   >
-                    <span className="text-[#4A6FA5] flex-shrink-0">{action.icon}</span>
+                    <span className="text-[#4A6FA5] shrink-0">{action.icon}</span>
                     {action.label}
                   </button>
                 ))}
@@ -248,13 +248,13 @@ export default function AssistantPage() {
                 >
                   {/* avatar */}
                   {msg.role === 'assistant' ? (
-                    <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A6FA5" strokeWidth="1.8">
                         <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/>
                       </svg>
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-[#4A6FA5] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-8 h-8 bg-[#4A6FA5] rounded-full flex items-center justify-center shrink-0 mt-0.5">
                       <span className="text-white text-xs font-semibold">
                         {user?.name?.charAt(0) || 'U'}
                       </span>
@@ -279,7 +279,7 @@ export default function AssistantPage() {
               {/* typing indicator */}
               {loading && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A6FA5" strokeWidth="1.8">
                       <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/>
                     </svg>
@@ -301,13 +301,13 @@ export default function AssistantPage() {
 
         {/* quick action chips when chat is active */}
         {!isEmpty && (
-          <div className="px-8 pb-2 flex items-center gap-2 flex-shrink-0">
+          <div className="px-8 pb-2 flex items-center gap-2 shrink-0">
             <div className="max-w-2xl mx-auto w-full flex items-center gap-2 overflow-x-auto">
               {quickActions.map((action, i) => (
                 <button
                   key={i}
                   onClick={() => sendMessage(action.prompt)}
-                  className="flex items-center gap-1.5 bg-white border border-gray-200 hover:border-[#4A6FA5]/40 text-xs text-gray-500 font-medium px-3 py-1.5 rounded-xl whitespace-nowrap transition-colors flex-shrink-0"
+                  className="flex items-center gap-1.5 bg-white border border-gray-200 hover:border-[#4A6FA5]/40 text-xs text-gray-500 font-medium px-3 py-1.5 rounded-xl whitespace-nowrap transition-colors shrink-0"
                 >
                   <span className="text-[#4A6FA5]">{action.icon}</span>
                   {action.label}
@@ -318,10 +318,10 @@ export default function AssistantPage() {
         )}
 
         {/* input bar */}
-        <div className="px-8 pb-6 pt-2 flex-shrink-0">
+        <div className="px-8 pb-6 pt-2 shrink-0">
           <div className="max-w-2xl mx-auto">
             <div className="flex items-end gap-3 bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm focus-within:border-[#4A6FA5]/50 transition-colors">
-              <button className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mb-0.5">
+              <button className="text-gray-400 hover:text-gray-600 transition-colors shrink-0 mb-0.5">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                 </svg>
@@ -343,7 +343,7 @@ export default function AssistantPage() {
               <button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || loading}
-                className="w-8 h-8 bg-[#4A6FA5] hover:bg-[#3d5d8f] disabled:bg-gray-200 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center flex-shrink-0 transition-colors mb-0.5"
+                className="w-8 h-8 bg-[#4A6FA5] hover:bg-[#3d5d8f] disabled:bg-gray-200 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center shrink-0 transition-colors mb-0.5"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="22" y1="2" x2="11" y2="13"/>

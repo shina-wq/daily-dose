@@ -107,7 +107,7 @@ export default function AppointmentsPage() {
         </div>
         <button
           onClick={() => router.push('/appointments/add')}
-          className="flex items-center gap-2 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors"
+          className="flex items-center gap-2 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors cursor-pointer"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -182,7 +182,7 @@ export default function AppointmentsPage() {
         </div>
 
         {/* right — calendar + pre-visit summary */}
-        <div className="w-72 flex-shrink-0 space-y-4">
+        <div className="w-72 shrink-0 space-y-4">
           {/* calendar */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 calendar-wrapper">
             <Calendar
@@ -284,7 +284,7 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
     }`}>
       {/* timeline dot */}
       <div className="flex flex-col items-center pt-1">
-        <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
+        <div className={`w-3 h-3 rounded-full shrink-0 ${
           isUpcoming ? 'bg-[#4A6FA5]' : 'bg-gray-300'
         }`} />
         <div className="w-px flex-1 bg-gray-100 mt-1" />
@@ -295,7 +295,7 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-3">
             {/* avatar */}
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0 ${
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${
               isUpcoming ? 'bg-[#4A6FA5] text-white' : 'bg-gray-200 text-gray-500'
             }`}>
               {(appt.doctor_name || appt.title).charAt(0).toUpperCase()}
@@ -307,7 +307,7 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
               <p className="text-xs text-gray-400">{appt.title}</p>
             </div>
           </div>
-          <div className="text-right flex-shrink-0 ml-4">
+          <div className="text-right shrink-0 ml-4">
             <p className="text-xs font-medium text-gray-500">
               {format(apptDate, 'MMM d, yyyy')}
             </p>
@@ -379,12 +379,12 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
             <>
               <button
                 onClick={onDelete}
-                className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
+                className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
               >
                 Delete
               </button>
               <span className="text-gray-200">|</span>
-              <button className="text-xs font-medium text-[#4A6FA5] hover:underline transition-colors">
+              <button className="text-xs font-medium text-[#4A6FA5] hover:underline transition-colors cursor-pointer">
                 View Full History →
               </button>
             </>

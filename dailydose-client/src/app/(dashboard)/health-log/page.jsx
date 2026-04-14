@@ -356,7 +356,7 @@ export default function HealthLogPage() {
         </div>
 
         {/* right — recent history */}
-        <div className="w-96 flex-shrink-0">
+        <div className="w-96 shrink-0">
           <h2 className="text-base font-semibold text-gray-900 mb-4">Recent History</h2>
 
           {recentLogs.length === 0 ? (

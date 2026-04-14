@@ -232,7 +232,7 @@ export default function MedicationsPage() {
         </div>
         <button
           onClick={() => router.push('/medications/add')}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4A6FA5] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3d5d8f] sm:w-auto"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4A6FA5] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3d5d8f] sm:w-auto cursor-pointer"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -389,7 +389,7 @@ export default function MedicationsPage() {
                     </div>
                   </div>
                   <div className="relative group">
-                    <button className="text-gray-400 hover:text-gray-600 p-1">
+                    <button className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                       </svg>
@@ -397,13 +397,13 @@ export default function MedicationsPage() {
                     <div className="absolute right-0 top-7 bg-white border border-gray-100 rounded-xl shadow-lg py-1 w-32 hidden group-hover:block z-10">
                       <button
                         onClick={() => router.push(`/medications/edit/${med.id}`)}
-                        className="w-full text-left px-3 py-2 text-xs text-gray-600 hover:bg-gray-50"
+                        className="w-full text-left px-3 py-2 text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(med.id)}
-                        className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50"
+                        className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 cursor-pointer"
                       >
                         Delete
                       </button>
@@ -455,7 +455,7 @@ export default function MedicationsPage() {
                 <div className="flex flex-col gap-2 border-t border-gray-50 pt-3 sm:flex-row sm:items-center">
                 <button
                     onClick={() => router.push(`/medications/${med.id}`)}
-                  className="px-3 py-2 text-left text-xs font-medium text-gray-500 transition-colors hover:text-gray-700"
+                  className="px-3 py-2 text-left text-xs font-medium text-gray-500 transition-colors hover:text-gray-700 cursor-pointer"
                 >
                     Details
                 </button>
@@ -478,7 +478,7 @@ export default function MedicationsPage() {
                         <button
                         onClick={() => handleLogDose(med.id, 'taken')}
                         disabled={loggingMedicationId === med.id}
-                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-xl hover:bg-[#4A6FA5] hover:text-white transition-colors disabled:opacity-60"
+                        className="flex items-center justify-center gap-1.5 bg-[#4A6FA5]/10 text-[#4A6FA5] text-xs font-medium py-2 px-3 rounded-lg hover:bg-[#4A6FA5] hover:text-white transition-colors  cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                         {loggingMedicationId === med.id ? 'Updating...' : 'Mark Taken'}
                         </button>

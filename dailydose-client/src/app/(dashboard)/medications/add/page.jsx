@@ -58,7 +58,7 @@ export default function AddMedicationPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/medications')}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
@@ -67,7 +67,7 @@ export default function AddMedicationPage() {
           </button>
           <button
             onClick={() => router.push('/medications')}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 cursor-pointer"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -185,14 +185,14 @@ export default function AddMedicationPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/medications')}
-                    className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                    className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-60"
+                    className="px-5 py-2.5 bg-[#4A6FA5] hover:bg-[#3d5d8f] text-white text-sm font-medium rounded-xl transition-colors cursor-pointer disabled:opacity-60"
                   >
                     {loading ? 'Adding...' : 'Add Medication'}
                   </button>
@@ -203,7 +203,7 @@ export default function AddMedicationPage() {
         </div>
 
         {/* right panel */}
-        <div className="w-72 space-y-4 flex-shrink-0">
+        <div className="w-72 space-y-4 shrink-0">
           {/* what happens next */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-4">What happens next</h3>
@@ -226,7 +226,7 @@ export default function AddMedicationPage() {
                 }
               ].map(item => (
                 <div key={item.num} className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#4A6FA5] text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-[#4A6FA5] text-white text-xs font-semibold flex items-center justify-center shrink-0">
                     {item.num}
                   </div>
                   <div>
@@ -273,7 +273,7 @@ export default function AddMedicationPage() {
                 }
               ].map((tip, i) => (
                 <div key={i} className="flex gap-2.5">
-                  <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
                     {tip.icon}
                   </div>
                   <div>
@@ -291,7 +291,7 @@ export default function AddMedicationPage() {
             <p className="text-xs text-white/70 mb-4">Ask the AI assistant to suggest reminder timing based on your routine.</p>
             <button
               onClick={() => router.push('/assistant')}
-              className="w-full bg-white text-[#4A6FA5] text-sm font-medium py-2.5 rounded-xl hover:bg-blue-50 transition-colors"
+              className="w-full bg-white text-[#4A6FA5] text-sm font-medium py-2.5 rounded-xl hover:bg-blue-50 transition-colors cursor-pointer"
             >
               Ask AI Assistant
             </button>
