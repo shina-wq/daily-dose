@@ -154,6 +154,7 @@ export default function AppointmentsPage() {
                     onComplete={() => setCompleteModal(appt)}
                     onDelete={() => handleDelete(appt.id)}
                     onEdit={() => router.push(`/appointments/edit/${appt.id}`)}
+                    onView={() => router.push(`/appointments/edit/${appt.id}`)}
                     isFirst={index === 0}
                   />
                 ))}
@@ -198,9 +199,10 @@ export default function AppointmentsPage() {
             <div className="bg-[#4A6FA5] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
-                    <circle cx="9" cy="14" r="1" fill="white"/><circle cx="15" cy="14" r="1" fill="white"/>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/>
+                    <path d="M18.5 14.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z"/>
+                    <path d="M6 14l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6L6 14z"/>
                   </svg>
                 </div>
                 <div>
@@ -227,7 +229,7 @@ export default function AppointmentsPage() {
               </div>
               <button
                 onClick={() => router.push('/assistant')}
-                className="w-full bg-white text-[#4A6FA5] text-sm font-medium py-2.5 rounded-xl hover:bg-blue-50 transition-colors"
+                className="w-full bg-white text-[#4A6FA5] text-sm font-medium py-2.5 rounded-xl hover:bg-blue-50 transition-colors cursor-pointer"
               >
                 Generate Pre-Visit Summary
               </button>
@@ -273,13 +275,75 @@ export default function AppointmentsPage() {
   )
 }
 
+function downloadAppointmentSummary(appt) {
+  const apptDate = parseISO(appt.appointment_date)
+  const normalizedType = (appt.type || '').toLowerCase()
+  const locationText = (appt.location || '').trim()
+  const hasProtocol = /^https?:\/\//i.test(locationText)
+  const looksLikeDomain = /^[^\s]+\.[^\s]+/.test(locationText) && !locationText.includes(' ')
+  const isOnlineAppointment = ['telehealth', 'online', 'virtual'].includes(normalizedType) || hasProtocol || looksLikeDomain
+
+  const summaryLines = [
+    'Appointment Summary',
+    '-------------------',
+    `Provider: ${appt.doctor_name || appt.title || 'Unknown'}`,
+    `Specialty / Visit Type: ${appt.title || 'Medical Appointment'}`,
+    `Date: ${format(apptDate, 'MMM d, yyyy')}`,
+    `Time: ${format(apptDate, 'h:mm a')}`,
+    `Type: ${isOnlineAppointment ? 'Telehealth' : 'In-person'}`,
+    isOnlineAppointment
+      ? `Meeting Link: ${locationText || 'Not provided'}`
+      : `Location: ${locationText || 'Not provided'}`,
+    `Status: ${appt.completed ? 'Completed' : 'Pending'}`,
+    '',
+    'Notes',
+    '-----',
+    appt.notes ? appt.notes : 'No notes recorded.'
+  ]
+
+  const blob = new Blob([summaryLines.join('\n')], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `appointment-summary-${format(apptDate, 'yyyy-MM-dd')}.txt`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
 // appointment card component
-function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) {
+function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, onView, isFirst }) {
   const apptDate = parseISO(appt.appointment_date)
   const isUpcoming = type === 'upcoming'
+  const normalizedType = (appt.type || '').toLowerCase()
+  const locationText = (appt.location || '').trim()
+  const hasProtocol = /^https?:\/\//i.test(locationText)
+  const looksLikeDomain = /^[^\s]+\.[^\s]+/.test(locationText) && !locationText.includes(' ')
+  const isOnlineAppointment = ['telehealth', 'online', 'virtual'].includes(normalizedType) || hasProtocol || looksLikeDomain
+
+  const handlePrimaryAction = () => {
+    if (!isOnlineAppointment) {
+      onComplete?.()
+      return
+    }
+
+    if (!locationText) {
+      ;(onView || onEdit)?.()
+      return
+    }
+
+    const joinUrl = hasProtocol ? locationText : `https://${locationText}`
+
+    try {
+      window.open(joinUrl, '_blank', 'noopener,noreferrer')
+    } catch {
+      ;(onView || onEdit)?.()
+    }
+  }
 
   return (
-    <div className={`bg-white rounded-2xl border shadow-sm p-5 flex gap-4 ${
+    <div className={`bg-white rounded-2xl shadow-sm p-5 flex gap-4 ${
       isFirst && isUpcoming ? 'border-[#4A6FA5]/30' : 'border-gray-100'
     }`}>
       {/* timeline dot */}
@@ -320,11 +384,20 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
         {/* location */}
         {appt.location && (
           <div className="flex items-center gap-1.5 mb-1.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <p className="text-xs text-gray-400">{appt.location}</p>
+            {isOnlineAppointment ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A6FA5" strokeWidth="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            )}
+            <p className={`text-xs ${isOnlineAppointment ? 'text-[#4A6FA5]' : 'text-gray-400'} truncate`}>
+              {isOnlineAppointment ? `Meeting Link: ${appt.location}` : appt.location}
+            </p>
           </div>
         )}
 
@@ -350,38 +423,46 @@ function AppointmentCard({ appt, type, onComplete, onDelete, onEdit, isFirst }) 
         )}
 
         {/* actions */}
-        <div className="flex items-center gap-2 pt-3 border-t border-gray-50">
+        <div className="flex items-center justify-between gap-3 pt-4 mt-4 border-t border-gray-100">
           {isUpcoming && (
             <>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={handlePrimaryAction}
+                  className="px-3 py-1.5 text-xs font-medium text-[#4A6FA5] border border-[#4A6FA5]/25 bg-[#4A6FA5]/5 rounded-md hover:bg-[#4A6FA5]/10 transition-colors cursor-pointer"
+                >
+                  {isOnlineAppointment ? 'Join Call' : 'Mark Completed'}
+                </button>
+                <button
+                  onClick={onEdit}
+                  className="px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Reschedule
+                </button>
+                <button
+                  onClick={onDelete}
+                  className="px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+
               <button
-                onClick={onComplete}
-                className="text-xs font-medium text-[#4A6FA5] hover:underline transition-colors"
+                onClick={onView || onEdit}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#4A6FA5] hover:text-[#3d5d8f] transition-colors shrink-0 cursor-pointer"
               >
-                Mark Completed
-              </button>
-              <span className="text-gray-200">|</span>
-              <button
-                onClick={onEdit}
-                className="text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                Reschedule
-              </button>
-              <span className="text-gray-200">|</span>
-              <button
-                onClick={onDelete}
-                className="text-xs font-medium text-red-400 hover:text-red-600 transition-colors"
-              >
-                Cancel
+                View Details
+                <span aria-hidden="true">→</span>
               </button>
             </>
           )}
           {!isUpcoming && (
             <>
               <button
-                onClick={onDelete}
-                className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                onClick={() => downloadAppointmentSummary(appt)}
+                className="px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
               >
-                Delete
+                Download Summary
               </button>
               <span className="text-gray-200">|</span>
               <button className="text-xs font-medium text-[#4A6FA5] hover:underline transition-colors cursor-pointer">

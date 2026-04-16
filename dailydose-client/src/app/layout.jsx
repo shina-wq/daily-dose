@@ -8,6 +8,11 @@ const geist = Geist({ subsets: ['latin'] })
 export const metadata = {
   title: 'DailyDose',
   description: 'Your daily companion for chronic illness management',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg'
+  }
 }
 
 export default function RootLayout({ children }) {
